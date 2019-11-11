@@ -1,0 +1,118 @@
+#include "switches.h"
+#include "timer.h"
+#include "interrupt.h"
+
+#define TIME_COUNT 59
+static volatile uint8   g_clock_flag=0 ,g_counter_flag=0  ;
+volatile uint8    Hours=0,   Minutes=0,    Seconds=0 ;
+volatile uint8    counter_H=0, counter_M=0, counter_S=0   ,  g_turn_counter=0 ;
+
+void switch_init()
+{
+	sei();
+
+	TIMER1_CTC_A_CallBack(callBackTimer1);
+	INT0_CallBack(callBackin0);
+	INT1_CallBack(callBackin1);
+	INT2_CallBack(callBackin2);
+
+	INTERRUPT_Config int0_Conf={FALLING_EDGE, PULL_UP} ,
+			         int1_Conf={FALLING_EDGE, PULL_UP} ,
+					 int2_Conf={FALLING_EDGE, PULL_UP} ;
+	TIMER1_CTC_A_init(31250,4);     //prescaler 256 at f 8000000 it will be every second.
+	INT0_Init(&int0_Conf);     //run in falling edge
+	INT1_Init(&int1_Conf);     //run in falling edge
+	INT2_Init(&int2_Conf);     //run in falling edge
+}
+
+void callBackTimer1(void){
+	Seconds++;
+	if(Seconds==TIME_COUNT)
+	{
+		Seconds=0;
+		Minutes++;
+		if(Minutes==TIME_COUNT){
+			Minutes=0;
+			Hours++;
+			if(Hours==24)
+				Hours=0;
+		}
+	}
+	if(g_turn_counter==2||g_turn_counter==3){
+		if (counter_S>0)
+			counter_S--;
+
+		if(counter_S==0  &&  (counter_M>0||counter_H>0) )
+		{
+			if (counter_M>0){
+				counter_S=TIME_COUNT;
+				counter_M--;
+			}
+			if(counter_M==0 && counter_S==0 && counter_H > 0){
+				counter_M=TIME_COUNT;
+				counter_S=TIME_COUNT;
+				counter_H--;
+			}
+		}
+	}
+}
+
+void callBackin0(void){
+
+	if(g_turn_counter==0){
+		g_clock_flag++;
+		if (g_clock_flag==4)
+			g_clock_flag=0;
+	}
+	if(g_turn_counter==1){
+		g_counter_flag++;
+		if(g_counter_flag==4)
+			g_counter_flag=0;
+	}
+}
+
+void callBackin1(void){
+
+	if(g_turn_counter==0){
+		if(g_clock_flag==1 ) {
+			Hours++;
+			if(Hours==24)
+				Hours=0;
+		}
+		else if(g_clock_flag==2 ) {
+			Minutes++;
+			if(Minutes==TIME_COUNT)
+				Minutes=0;
+		}
+		else if(g_clock_flag==3 ) {
+			Seconds++;
+			if(Seconds==TIME_COUNT)
+				Seconds=0;
+		}
+	}
+	////////for counter////////////
+	if(g_turn_counter==1){
+		if((g_counter_flag==1) ) {
+			counter_H++;
+			if(counter_H==24)
+				counter_H=0;
+		}
+		else if((g_counter_flag==2) ) {
+			counter_M++;
+			if(counter_M==TIME_COUNT)
+				counter_M=0;
+		}
+		else if((g_counter_flag==3 )) {
+			counter_S++;
+			if(counter_S==TIME_COUNT)
+				counter_S=0;
+		}
+	}
+}
+
+void callBackin2(void){
+
+	g_turn_counter ++;
+	if(g_turn_counter==4)
+		g_turn_counter=0;
+}

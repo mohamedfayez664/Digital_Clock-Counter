@@ -1,0 +1,55 @@
+14:07:19 **** Incremental Build of configuration Debug for project lcd_watch ****
+make all 
+Building file: ../main.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"main.d" -MT"main.o" -c -o "main.o" "../main.c"
+In file included from ../switches.h:4,
+                 from ../main.c:3:
+../micro_compiler_config.h:17:1: warning: "F_CPU" redefined
+<command-line>: warning: this is the location of the previous definition
+In file included from ../micro_compiler_config.h:20,
+                 from ../switches.h:4,
+                 from ../main.c:3:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../main.c
+ 
+Building file: ../sev_segment.c
+Invoking: AVR Compiler
+avr-gcc -Wall -g2 -gstabs -O0 -fpack-struct -fshort-enums -ffunction-sections -fdata-sections -std=gnu99 -funsigned-char -funsigned-bitfields -mmcu=atmega16 -DF_CPU=1000000UL -MMD -MP -MF"sev_segment.d" -MT"sev_segment.o" -c -o "sev_segment.o" "../sev_segment.c"
+In file included from ../sev_segment.h:5,
+                 from ../sev_segment.c:1:
+../micro_compiler_config.h:17:1: warning: "F_CPU" redefined
+<command-line>: warning: this is the location of the previous definition
+In file included from ../micro_compiler_config.h:20,
+                 from ../sev_segment.h:5,
+                 from ../sev_segment.c:1:
+c:/winavr-20100110/lib/gcc/../../avr/include/util/delay.h:90:3: warning: #warning "Compiler optimizations disabled; functions from <util/delay.h> won't work as designed"
+Finished building: ../sev_segment.c
+ 
+Building target: lcd_watch.elf
+Invoking: AVR C Linker
+avr-gcc -Wl,-Map,lcd_watch.map -mmcu=atmega16 -o "lcd_watch.elf"  ./interrupt.o ./main.o ./sev_segment.o ./switches.o ./timer.o   
+Finished building target: lcd_watch.elf
+ 
+Invoking: AVR Create Extended Listing
+avr-objdump -h -S lcd_watch.elf  >"lcd_watch.lss"
+Finished building: lcd_watch.lss
+ 
+Invoking: Print Size
+avr-size --format=avr --mcu=atmega16 lcd_watch.elf
+AVR Memory Usage
+----------------
+Device: atmega16
+
+Program:    9742 bytes (59.5% Full)
+(.text + .data + .bootloader)
+
+Data:        291 bytes (28.4% Full)
+(.data + .bss + .noinit)
+
+
+Finished building: sizedummy
+ 
+
+14:07:20 Build Finished. 0 errors, 4 warnings. (took 531ms)
+
